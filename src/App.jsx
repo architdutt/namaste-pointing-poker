@@ -4,9 +4,12 @@ import FooterSection from './components/FooterSection'
 import HeaderSection from './components/HeaderSection'
 
 function App() {
-  const [darkMode, setDarkMode] = useState(
-    () => localStorage.getItem('theme') === 'dark'
-  )
+  const [darkMode, setDarkMode] = useState(() => {
+    const storedTheme = localStorage.getItem('theme')
+    if (storedTheme) return storedTheme === 'dark'
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    return prefersDark
+  })
 
   useEffect(() => {
     const root = window.document.documentElement
@@ -20,11 +23,11 @@ function App() {
   }, [darkMode])
   
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 dark:text-gray-100 transition-colors">
-    <HeaderSection toggleTheme={() => setDarkMode(!darkMode)} darkMode={darkMode} />
-    <Body />
-    <FooterSection />
-  </div>
+    <div className="min-h-screen flex flex-col transition-colors duration-500 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
+      <HeaderSection toggleTheme={() => setDarkMode(!darkMode)} darkMode={darkMode} />
+      <Body />
+      <FooterSection />
+    </div>
   )
 }
 
