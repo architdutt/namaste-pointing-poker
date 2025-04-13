@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import PageWrapper from '../components/PageWrapper'
+import { Helmet } from 'react-helmet-async' 
 
 const Session = () => {
   const { id } = useParams()
@@ -15,6 +16,17 @@ const Session = () => {
 
   return (
     <PageWrapper>
+       <Helmet>
+        <title>Join Session | Namaste Pointing Poker</title>
+        <meta
+          name="description"
+          content={`Join session ${id} on Namaste Pointing Poker. A simple, collaborative tool for Agile teams to estimate tasks.`}
+        />
+        <meta property="og:title" content="Join a Pointing Poker Session" />
+        <meta property="og:description" content="Join and collaborate with your Agile team to estimate stories easily and quickly." />
+        <meta property="og:url" content={`https://namaste-pointing-poker.web.app/session/${id}`} />
+        <meta property="og:image" content="https://namaste-pointing-poker.web.app/og-image.jpg" />
+      </Helmet>
       <div className="flex flex-col items-center justify-center h-[80vh] px-4">
         <div className="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 p-6 rounded-xl shadow-md w-full max-w-md">
           <h2 className="text-2xl font-bold mb-4 text-center">Join Session</h2>

@@ -24,12 +24,21 @@ const FooterSection = () => {
 
   return (
     <footer className="bg-white dark:bg-gray-800 text-center p-4 text-sm text-gray-500 dark:text-gray-400 border-t dark:border-gray-700">
-      © {new Date().getFullYear()} Namaste Pointing Poker — Show some love ❤️
-
-      <div className="mt-2 flex justify-center gap-6 items-center">
+    <div>
+    © {new Date().getFullYear()} Namaste Pointing Poker — Developed by <span className="font-medium text-gray-600 dark:text-gray-300">
+        Archit Dutt Sharma
+      </span> for Agile & Scrum teams
+      
+    </div>
+  
+    <div className="mt-2 flex flex-col items-center gap-1">
+      <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
+        Show some love 💖
+      </p>
+  
+      <div className="flex justify-center gap-6 items-center">
         {/* UPI Donation */}
         <div className="relative">
-          {/* Conditional rendering for UPI link on mobile */}
           {isMobile ? (
             <a
               href="upi://pay?pa=9886763282@axisb&cu=INR"
@@ -46,7 +55,7 @@ const FooterSection = () => {
             </button>
           )}
         </div>
-
+  
         {/* BuyMeACoffee */}
         <a
           href="https://www.buymeacoffee.com/architdutt"
@@ -57,20 +66,24 @@ const FooterSection = () => {
           Donate ☕
         </a>
       </div>
-
-      {/* Modal for UPI QR */}
-      <Modal isOpen={showQRModal} onClose={() => setShowQRModal(false)}>
-        <h3 className="text-lg font-semibold text-center mb-4">Scan to Pay via UPI</h3>
-        <img
-          src={qrImage}
-          alt="UPI QR"
-          className="mx-auto rounded w-auto h-auto max-w-xs"
-        />
-        <p className="text-center text-xs text-gray-600 mt-2">
-          Thank you for supporting! ❤️🚀
-        </p>
-      </Modal>
-    </footer>
+    </div>
+  
+    {/* Modal for UPI QR */}
+    <Modal isOpen={showQRModal} onClose={() => setShowQRModal(false)}>
+      <h3 className="text-lg font-semibold text-center mb-4">
+        Scan to Pay via UPI
+      </h3>
+      <img
+        src={qrImage}
+        alt="UPI QR"
+        className="mx-auto rounded w-auto h-auto max-w-xs"
+      />
+      <p className="text-center text-xs text-gray-600 mt-2">
+        Thank you for supporting! ❤️🚀
+      </p>
+    </Modal>
+  </footer>
+  
   );
 };
 

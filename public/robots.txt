@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://namaste-pointing-poker.web.app/sitemap.xml
+Host: https://namaste-pointing-poker.web.app

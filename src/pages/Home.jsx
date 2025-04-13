@@ -2,6 +2,7 @@ import React from 'react'
 import PageWrapper from '../components/PageWrapper'
 import { useNavigate } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid'
+import { Helmet } from 'react-helmet-async';
 
 const Home = () => {
     const navigate = useNavigate()
@@ -12,6 +13,26 @@ const Home = () => {
     }
 
   return (
+    <>
+    <Helmet>
+  <title>Namaste Pointing Poker | Agile Estimation Made Simple</title>
+  <meta name="description" content="Namaste Pointing Poker is a free, fast, and collaborative tool for agile teams to estimate story points using Planning Poker." />
+  <meta name="keywords" content="Planning Poker, Scrum Poker, Agile, Estimation, Pointing Poker, Story Points, Namaste Pointing Poker" />
+  <meta name="author" content="Archit Dutt Sharma" />
+
+  {/* Open Graph / Facebook */}
+  <meta property="og:title" content="Namaste Pointing Poker" />
+  <meta property="og:description" content="A simple and intuitive pointing poker tool for agile teams to estimate stories remotely." />
+  <meta property="og:image" content="https://namaste-pointing-poker.web.app/og-image.jpg" />
+  <meta property="og:url" content="https://namaste-pointing-poker.web.app" />
+  <meta property="og:type" content="website" />
+
+  {/* Twitter */}
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Namaste Pointing Poker" />
+  <meta name="twitter:description" content="Estimation made easy with a free Planning Poker tool for agile teams." />
+  <meta name="twitter:image" content="https://namaste-pointing-poker.web.app/og-image.jpg" />
+</Helmet>
     <PageWrapper>
       <div className="flex flex-col items-center justify-center flex-grow bg-gray-100 dark:bg-gray-900 p-4 transition-colors">
         <div className="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 rounded-xl shadow-md p-6 max-w-2xl">
@@ -30,10 +51,11 @@ const Home = () => {
             <br /><br />
             <strong>Why use Pointing Poker?</strong><br />
             It helps teams achieve collective estimates, reduce bias, and improve collaboration. The system uses a Fibonacci scale for estimating task complexity:
-            <ul className="list-disc pl-6">
+            </p>
+            <ul className="list-disc pl-6 mb-2">
               <li>0, 1, 2, 3, 5, 8, 13, 20, 40, 100, ?, ∞</li>
             </ul>
-          </p>
+          
           <button className="bg-blue-600 text-white px-4 py-2 rounded-3xl hover:bg-blue-700"
           onClick={handleCreateSession}>
             Create a pointing poker session
@@ -41,6 +63,7 @@ const Home = () => {
         </div>
       </div>
     </PageWrapper>
+    </>
   )
 }
 
