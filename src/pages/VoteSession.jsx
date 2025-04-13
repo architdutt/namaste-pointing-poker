@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import PageWrapper from "../components/PageWrapper";
 import { db } from "../firebase";
 import { ref, onValue, set, remove } from "firebase/database";
@@ -28,18 +28,22 @@ const VoteSession = () => {
     new URLSearchParams(location.search).get("name") ||
     localStorage.getItem("participantName") ||
     "Anonymous";
+  const navigate = useNavigate(); // hook for navigation
 
   const [selectedVote, setSelectedVote] = useState(null);
   const [allVotes, setAllVotes] = useState({});
   const [showVotes, setShowVotes] = useState(false);
   const [totalParticipants, setTotalParticipants] = useState(0);
-
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(baseUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000); // hide after 2 seconds
+  };
+
+  const handleNewSession = () => {
+    navigate("/"); // navigate to the home page
   };
 
   useEffect(() => {
@@ -133,9 +137,7 @@ const VoteSession = () => {
 
         {/* Voting Status Card */}
         <div className="bg-gray-100 dark:bg-gray-700 p-6 rounded-xl text-center">
-          <h4 className="text-md font-medium mb-2">
-            Votes Casted: {voteCount}
-          </h4>
+          <h4 className="text-md font-medium mb-2">Votes Casted: {voteCount}</h4>
           <div className="w-full h-3 bg-gray-300 rounded-full overflow-hidden">
             <div
               className="h-full bg-blue-600 transition-all"
@@ -199,6 +201,16 @@ const VoteSession = () => {
               )}
             </div>
           </div>
+        </div>
+
+        {/* New Session Button */}
+        <div className="text-center">
+          <button
+            onClick={handleNewSession}
+            className="bg-green-600 text-white px-4 py-2 rounded-3xl hover:bg-green-700"
+          >
+            Start a New Session
+          </button>
         </div>
       </div>
     </PageWrapper>

@@ -1,11 +1,13 @@
 import React from 'react'
 import pokerLogo from '../assets/planning-poker.svg'
+import { useNavigate } from 'react-router-dom'
 
 const HeaderSection = ({ toggleTheme, darkMode }) => {
+  const navigate = useNavigate()
   return (
       <header className="transition-colors duration-500 bg-white dark:bg-gray-800 shadow p-4 flex items-center justify-between border-b dark:border-gray-700">
 
-      <div className="flex items-center space-x-3">
+      <div className="flex items-center space-x-3"  onClick={() => navigate('/')}>
         <img src={pokerLogo} className="w-10 h-10" alt="planning-poker" />
         <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
           Namaste Pointing Poker
