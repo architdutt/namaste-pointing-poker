@@ -29,12 +29,22 @@ const FooterSection = () => {
       <div className="mt-2 flex justify-center gap-6 items-center">
         {/* UPI Donation */}
         <div className="relative">
-          <button
-            className="flex items-center gap-1 text-fuchsia-800 hover:underline"
-            onClick={() => setShowQRModal(!showQRModal)}
-          >
-            Donate via UPI
-          </button>
+          {/* Conditional rendering for UPI link on mobile */}
+          {isMobile ? (
+            <a
+              href="upi://pay?pa=9886763282@axisb&cu=INR"
+              className="text-blue-500 hover:underline"
+            >
+              Donate via UPI
+            </a>
+          ) : (
+            <button
+              className="flex items-center gap-1 text-fuchsia-800 hover:underline"
+              onClick={() => setShowQRModal(!showQRModal)}
+            >
+              Donate via UPI
+            </button>
+          )}
         </div>
 
         {/* BuyMeACoffee */}
@@ -47,18 +57,6 @@ const FooterSection = () => {
           Donate ☕
         </a>
       </div>
-
-      {/* Conditional rendering for UPI link based on mobile detection */}
-      {isMobile && (
-        <div className="mt-4">
-          <a
-            href="upi://pay?pa=9886763282@axisb&cu=INR"
-            className="text-blue-500 hover:underline"
-          >
-            Donate via UPI
-          </a>
-        </div>
-      )}
 
       {/* Modal for UPI QR */}
       <Modal isOpen={showQRModal} onClose={() => setShowQRModal(false)}>
