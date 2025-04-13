@@ -25,7 +25,7 @@ const FooterSection = () => {
 
         {/* BuyMeACoffee */}
         <a
-          href="https://www.buymeacoffee.com/yourhandle"
+          href="https://www.buymeacoffee.com/architdutt"
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center gap-1 text-yellow-600 hover:underline"
