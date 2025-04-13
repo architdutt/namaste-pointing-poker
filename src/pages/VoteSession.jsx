@@ -1,50 +1,115 @@
-import React, { useState } from 'react'
-import { useParams, useLocation } from 'react-router-dom'
-import PageWrapper from '../components/PageWrapper'
+import React, { useEffect, useState } from "react";
+import { useParams, useLocation } from "react-router-dom";
+import PageWrapper from "../components/PageWrapper";
+import { db } from "../firebase";
+import { ref, onValue, set, remove } from "firebase/database";
 
-const fibonacciPoints = ["0", "0.5", "1", "2", "3", "5", "8", "13", "20", "40", "100", "?", "∞"]
+const fibonacciPoints = [
+  "0",
+  "0.5",
+  "1",
+  "2",
+  "3",
+  "5",
+  "8",
+  "13",
+  "20",
+  "40",
+  "100",
+  "?",
+  "∞",
+];
 
 const VoteSession = () => {
-  const { id } = useParams()
-  const location = useLocation()
+  const { id: sessionId } = useParams();
+  const baseUrl = window.location.origin + `/session/${sessionId}`;
+  const location = useLocation();
   const participantName =
-  new URLSearchParams(location.search).get('name') ||
-  localStorage.getItem('participantName') ||
-  'Anonymous'
+    new URLSearchParams(location.search).get("name") ||
+    localStorage.getItem("participantName") ||
+    "Anonymous";
 
-  const [selectedVote, setSelectedVote] = useState(null)
-  const [allVotes, setAllVotes] = useState({})
-  const [showVotes, setShowVotes] = useState(false)
+  const [selectedVote, setSelectedVote] = useState(null);
+  const [allVotes, setAllVotes] = useState({});
+  const [showVotes, setShowVotes] = useState(false);
+  const [totalParticipants, setTotalParticipants] = useState(0);
+
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(baseUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000); // hide after 2 seconds
+  };
+
+  useEffect(() => {
+    // Save participant locally and register in DB
+    localStorage.setItem("participantName", participantName);
+    const participantRef = ref(
+      db,
+      `sessions/${sessionId}/participants/${participantName}`
+    );
+    set(participantRef, true);
+
+    // Listen to votes
+    const voteRef = ref(db, `sessions/${sessionId}/votes`);
+    const votesUnsub = onValue(voteRef, (snapshot) => {
+      const data = snapshot.val() || {};
+      setAllVotes(data);
+    });
+
+    // Listen to participants
+    const participantsRef = ref(db, `sessions/${sessionId}/participants`);
+    const participantsUnsub = onValue(participantsRef, (snapshot) => {
+      const data = snapshot.val() || {};
+      setTotalParticipants(Object.keys(data).length);
+    });
+
+    // Cleanup
+    return () => {
+      votesUnsub();
+      participantsUnsub();
+    };
+  }, [participantName, sessionId]);
 
   const handleVote = (point) => {
-    setSelectedVote(point)
-    setAllVotes((prev) => ({ ...prev, [participantName]: point }))
-  }
+    setSelectedVote(point);
+    const voteRef = ref(db, `sessions/${sessionId}/votes/${participantName}`);
+    set(voteRef, point);
+  };
 
   const handleClear = () => {
-    setSelectedVote(null)
-    setAllVotes({})
-    setShowVotes(false)
-  }
+    setSelectedVote(null);
+    setShowVotes(false);
+    const sessionVotesRef = ref(db, `sessions/${sessionId}/votes`);
+    remove(sessionVotesRef);
+  };
 
   const handleReveal = () => {
-    setShowVotes(true)
-  }
+    setShowVotes(true);
+  };
 
-  const voteCount = Object.keys(allVotes).length
-  const totalVotes = Object.values(allVotes)
+  const voteCount = Object.keys(allVotes).length;
+  const totalVotes = Object.values(allVotes);
   const avg =
     totalVotes.length > 0
       ? totalVotes
           .filter((v) => !isNaN(v))
-          .reduce((acc, curr) => acc + parseFloat(curr), 0) / totalVotes.filter((v) => !isNaN(v)).length
-      : null
+          .reduce((acc, curr) => acc + parseFloat(curr), 0) /
+        totalVotes.filter((v) => !isNaN(v)).length
+      : null;
+  const progressPercent =
+    totalParticipants > 0
+      ? Math.min((voteCount / totalParticipants) * 100, 100)
+      : 0;
 
   return (
     <PageWrapper>
       <div className="max-w-4xl mx-auto p-4 flex flex-col gap-6">
-        <h2 className="text-2xl font-bold text-center">Session: {id}</h2>
-        <p className="text-lg text-center">Welcome, <strong>{participantName}</strong></p>
+        <h2 className="text-2xl font-bold text-center">Session: {sessionId}</h2>
+        <p className="text-lg text-center">
+          Welcome, <strong>{participantName}</strong>
+        </p>
 
         {/* Voting Card */}
         <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow text-center">
@@ -55,8 +120,8 @@ const VoteSession = () => {
                 key={point}
                 className={`px-4 py-2 rounded-full border ${
                   selectedVote === point
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white'
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white"
                 }`}
                 onClick={() => handleVote(point)}
               >
@@ -68,18 +133,26 @@ const VoteSession = () => {
 
         {/* Voting Status Card */}
         <div className="bg-gray-100 dark:bg-gray-700 p-6 rounded-xl text-center">
-          <h4 className="text-md font-medium mb-2">Votes Casted: {voteCount}</h4>
+          <h4 className="text-md font-medium mb-2">
+            Votes Casted: {voteCount}
+          </h4>
           <div className="w-full h-3 bg-gray-300 rounded-full overflow-hidden">
             <div
               className="h-full bg-blue-600 transition-all"
-              style={{ width: `${voteCount * 10}%` }}
+              style={{ width: `${progressPercent}%` }}
             />
           </div>
           <div className="flex justify-center gap-4 mt-4">
-            <button onClick={handleClear} className="bg-red-500 text-white px-4 py-2 rounded-xl">
+            <button
+              onClick={handleClear}
+              className="bg-amber-900 text-white px-4 py-2 rounded-xl"
+            >
               Clear Votes
             </button>
-            <button onClick={handleReveal} className="bg-green-600 text-white px-4 py-2 rounded-xl">
+            <button
+              onClick={handleReveal}
+              className="bg-emerald-700 text-white px-4 py-2 rounded-xl"
+            >
               Show Votes
             </button>
           </div>
@@ -95,7 +168,8 @@ const VoteSession = () => {
               </p>
             ))}
             <p className="mt-4 font-medium">
-              <strong>Average (excluding "?", ∞):</strong> {avg ? avg.toFixed(2) : 'N/A'}
+              <strong>Average:</strong>{" "}
+              {avg ? avg.toFixed(2) : "N/A"}
             </p>
           </div>
         )}
@@ -103,23 +177,32 @@ const VoteSession = () => {
         {/* Invite Link */}
         <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-xl text-center">
           <h4 className="text-lg font-semibold mb-2">Invite</h4>
-          <div className="flex justify-center items-center gap-2">
+          <div className="flex justify-center items-center gap-2 relative">
             <input
-              value={window.location.href}
+              value={baseUrl}
               readOnly
               className="border p-2 rounded-md w-full max-w-md text-gray-800 dark:text-white dark:bg-gray-700"
             />
-            <button
-              onClick={() => navigator.clipboard.writeText(window.location.href)}
-              className="bg-blue-600 text-white px-3 py-2 rounded-md"
-            >
-              Copy
-            </button>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleCopy}
+                className="bg-blue-600 text-white px-3 py-2 rounded-md"
+              >
+                Copy
+              </button>
+
+              {copied && (
+                <span className="text-lime-500 text-sm animate-fade">
+                  Copied!
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </div>
     </PageWrapper>
-  )
-}
+  );
+};
 
-export default VoteSession
+export default VoteSession;

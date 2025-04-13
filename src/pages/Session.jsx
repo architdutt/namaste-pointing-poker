@@ -25,7 +25,7 @@ const Session = () => {
             placeholder="Your name"
             value={name}
             onChange={e => setName(e.target.value)}
-            className="w-full mb-4 p-3 border rounded-lg text-gray-800 dark:text-gray-900"
+            className="w-full mb-4 p-3 border rounded-lg text-gray-800 dark:text-white"
           />
 
           <button
