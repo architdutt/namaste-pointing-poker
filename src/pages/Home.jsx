@@ -1,7 +1,16 @@
 import React from 'react'
-import PageWrapper from './PageWrapper'
+import PageWrapper from '../components/PageWrapper'
+import { useNavigate } from 'react-router-dom'
+import { v4 as uuidv4 } from 'uuid'
 
-const Body = () => {
+const Home = () => {
+    const navigate = useNavigate()
+
+    const handleCreateSession = () => {
+        const sessionId = uuidv4()
+        navigate(`/session/${sessionId}`)
+    }
+
   return (
     <PageWrapper>
     <div className="flex flex-col items-center justify-center flex-grow bg-gray-100 dark:bg-gray-900 p-4 transition-colors">
@@ -19,7 +28,8 @@ const Body = () => {
           • Unlimited sessions, rounds, and votes<br />
           • Fully responsive — works seamlessly on desktop, tablet, and mobile
         </p>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-3xl hover:bg-blue-700">
+        <button className="bg-blue-600 text-white px-4 py-2 rounded-3xl hover:bg-blue-700"
+        onClick={handleCreateSession}>
           Create a pointing poker session
         </button>
       </div>
@@ -28,4 +38,4 @@ const Body = () => {
   )
 }
 
-export default Body
+export default Home
