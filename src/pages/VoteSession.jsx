@@ -35,6 +35,8 @@ const VoteSession = () => {
   const [showVotes, setShowVotes] = useState(false);
   const [totalParticipants, setTotalParticipants] = useState(0);
   const [copied, setCopied] = useState(false);
+  const [participants, setParticipants] = useState({});
+
 
   const handleCopy = () => {
     navigator.clipboard.writeText(baseUrl);
@@ -67,6 +69,7 @@ const VoteSession = () => {
     const participantsUnsub = onValue(participantsRef, (snapshot) => {
       const data = snapshot.val() || {};
       setTotalParticipants(Object.keys(data).length);
+      setParticipants(data);
     });
 
     // Cleanup
@@ -137,7 +140,9 @@ const VoteSession = () => {
 
         {/* Voting Status Card */}
         <div className="bg-gray-100 dark:bg-gray-700 p-6 rounded-xl text-center">
-          <h4 className="text-md font-medium mb-2">Votes Casted: {voteCount}</h4>
+          <h4 className="text-md font-medium mb-2">
+            Votes Casted: {voteCount}
+          </h4>
           <div className="w-full h-3 bg-gray-300 rounded-full overflow-hidden">
             <div
               className="h-full bg-blue-600 transition-all"
@@ -160,6 +165,20 @@ const VoteSession = () => {
           </div>
         </div>
 
+        {/* Participants List */}
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
+          <h4 className="text-lg font-bold mb-4">Participants</h4>
+          {Object.keys(participants).length === 0 ? (
+            <p className="text-sm text-gray-500">No participants yet.</p>
+          ) : (
+            <ul className="list-disc pl-5 space-y-1 text-gray-800 dark:text-gray-200">
+              {Object.keys(participants).map((name) => (
+                <li key={name}>{name}</li>
+              ))}
+            </ul>
+          )}
+        </div>
+
         {/* Summary */}
         {showVotes && (
           <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
@@ -170,8 +189,7 @@ const VoteSession = () => {
               </p>
             ))}
             <p className="mt-4 font-medium">
-              <strong>Average:</strong>{" "}
-              {avg ? avg.toFixed(2) : "N/A"}
+              <strong>Average:</strong> {avg ? avg.toFixed(2) : "N/A"}
             </p>
           </div>
         )}
